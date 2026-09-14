@@ -17,7 +17,7 @@ try
     builder.Services.AddHostedService<OutboxProcessor>();
 
     var host = builder.Build();
-    Log.Information("ShopFlow Worker (outbox / funções de integração) iniciado.");
+    Log.Information("ShopFlow Worker Service (processamento da outbox) iniciado.");
     await host.RunAsync();
 }
 finally
