@@ -57,7 +57,7 @@ Fluxo de um pedido:
 1. `POST /api/v1/orders` → `PlaceOrderCommandHandler`
 2. `Order.Place` reserva estoque e dispara `OrderPlacedDomainEvent`
 3. `SaveChanges` grava o aggregate e a linha de **outbox** na mesma transação
-4. `OutboxProcessor` (API em Development e/ou `ShopFlow.Worker`) publica no EventBus, sincroniza Salesforce e arquiva JSON no storage
+4. `OutboxDispatcher` reclama a mensagem com lock, publica no EventBus, sincroniza Salesforce e arquiva no storage. Cada passo é gravado; falha no meio não republica o que já saiu.
 
 ## Como executar
 
@@ -169,6 +169,7 @@ dotnet test ShopFlow.sln
 | `ShopFlow.Domain.Tests` | Invariantes: dinheiro, e-mail, estoque, cupom, status do pedido |
 | `ShopFlow.Application.Tests` | Handlers com Moq (sucesso, 401, estoque insuficiente) |
 | `ShopFlow.Architecture.Tests` | Domain sem EF/MediatR; Application sem Infrastructure |
+| `ShopFlow.Infrastructure.Tests` | Outbox: falha parcial (não republica) e concorrência (um lock) |
 | `ShopFlow.Api.Tests` | Fluxo HTTP real: 200/201 e 401 |
 
 ## O que cada competência mostra no código
@@ -181,13 +182,13 @@ dotnet test ShopFlow.sln
 | SOLID | Handlers pequenos, abstrações, Strategy de desconto |
 | Repository + Unit of Work | Repositórios + `UnitOfWorkBehavior` no MediatR |
 | CQRS | Commands/Queries; EF na escrita, Dapper na leitura |
-| TDD | Teste vermelho → domínio → handler → API |
+| TDD | Ciclo TDD (teste que falha → código → verde); cenário de erro também fica verde |
 | JWT | Login, policies `Admin`/`Customer`, Swagger Bearer |
 | Key Vault + Managed Identity | `DefaultAzureCredential` em Production + Terraform |
 | REST | `/api/v1`, ProblemDetails, rate limiting, `/health` |
 | Salesforce | Porta `ISalesforceClient` + adapter HTTP ou log local |
 | EventBus / RabbitMQ / SQS | `IEventBus` escolhido por configuração |
-| Outbox | `OutboxMessages` no `SaveChanges` |
+| Outbox | `SaveChanges` grava o evento; o dispatcher reclama com lock e faz checkpoint por passo |
 | Processamento assíncrono | `ShopFlow.Worker` (`BackgroundService`), não Azure Functions |
 | Azure SQL / Storage | EF SQL Server + `IBlobStorage` |
 | Terraform / CI | `infra/terraform`, GitHub Actions, Azure Pipelines |
@@ -209,7 +210,7 @@ Pipelines: `.github/workflows/ci.yml` e `infra/pipelines/azure-pipelines.yml`.
 
 1. Comece pelo problema (checkout com estoque, cupom e integração) e pelas escolhas da tabela acima.
 2. Abra `Order.cs` e mostre invariantes + eventos — ainda sem controller.
-3. Mostre um teste **verde** (`ReserveStock_Should_Decrease_Quantity`) e um **vermelho esperado** (`ReserveStock_Should_Fail_When_Insufficient`).
+3. Mostre um teste **verde** (`ReserveStock_Should_Decrease_Quantity`) e um **teste de cenário de erro** (`ReserveStock_Should_Fail_When_Insufficient`) — ele também passa, porque a falha de negócio é o resultado esperado.
 4. Suba a API, abra o Swagger pela URL do console, faça login e um `GET /products` sem token (401).
 5. Mostre o outbox em `ShopFlowDbContext.SaveChangesAsync` e deixe claro: Worker Service ≠ Azure Functions.
 6. Feche com Terraform (Key Vault / Managed Identity) e o pipeline.

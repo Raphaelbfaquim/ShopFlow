@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopFlow.Architecture.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopFlow.Api.Tests", "tests\ShopFlow.Api.Tests\ShopFlow.Api.Tests.csproj", "{5997CF6A-EE2C-405D-BAE0-62281F5BF596}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopFlow.Infrastructure.Tests", "tests\ShopFlow.Infrastructure.Tests\ShopFlow.Infrastructure.Tests.csproj", "{9A72E180-F567-43EB-BE81-2A2D27DC3DCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{5997CF6A-EE2C-405D-BAE0-62281F5BF596}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5997CF6A-EE2C-405D-BAE0-62281F5BF596}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5997CF6A-EE2C-405D-BAE0-62281F5BF596}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A72E180-F567-43EB-BE81-2A2D27DC3DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A72E180-F567-43EB-BE81-2A2D27DC3DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A72E180-F567-43EB-BE81-2A2D27DC3DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A72E180-F567-43EB-BE81-2A2D27DC3DCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7C5B3B71-FE60-4E82-B5BE-9454E5F8E1F4} = {A8B9D874-3855-471E-BED4-7B75C2C0DEAA}
@@ -88,5 +94,6 @@ Global
 		{11053D7A-9E41-4385-8F30-72FE6DE4D0C8} = {B309288E-0B60-495B-B29F-E5C7DC18AA37}
 		{96AF57B0-79D0-4E80-844E-40899C64D100} = {B309288E-0B60-495B-B29F-E5C7DC18AA37}
 		{5997CF6A-EE2C-405D-BAE0-62281F5BF596} = {B309288E-0B60-495B-B29F-E5C7DC18AA37}
+		{9A72E180-F567-43EB-BE81-2A2D27DC3DCD} = {B309288E-0B60-495B-B29F-E5C7DC18AA37}
 	EndGlobalSection
 EndGlobal

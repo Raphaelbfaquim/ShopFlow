@@ -53,6 +53,8 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOutboxStore, EntityFrameworkOutboxStore>();
+        services.AddScoped<OutboxDispatcher>();
 
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();

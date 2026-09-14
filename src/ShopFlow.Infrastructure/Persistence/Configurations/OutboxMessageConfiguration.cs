@@ -12,6 +12,10 @@ public sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outbox
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Type).HasMaxLength(512).IsRequired();
         builder.Property(message => message.Payload).IsRequired();
-        builder.HasIndex(message => message.ProcessedOnUtc);
+        builder.Property(message => message.Error).HasMaxLength(2000);
+        builder.Property(message => message.LockedBy).HasMaxLength(120);
+        builder.Property(message => message.Version).IsConcurrencyToken();
+        builder.Ignore(message => message.IsProcessed);
+        builder.HasIndex(message => new { message.ProcessedOnUtc, message.LockedUntilUtc });
     }
 }
