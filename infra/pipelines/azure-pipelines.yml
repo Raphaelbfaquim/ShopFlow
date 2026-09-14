@@ -1,0 +1,41 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: Release
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildAndTest
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: sdk
+              version: 8.0.x
+          - script: dotnet restore ShopFlow.sln
+            displayName: Restore
+          - script: dotnet build ShopFlow.sln -c $(buildConfiguration) --no-restore
+            displayName: Build
+          - script: dotnet test ShopFlow.sln -c $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"
+            displayName: Test
+
+  - stage: Deploy
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: Azure
+        steps:
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/ShopFlow.Api/ShopFlow.Api.csproj
+              arguments: -c $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: drop

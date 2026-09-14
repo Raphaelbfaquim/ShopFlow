@@ -1,0 +1,12 @@
+@Host = http://localhost:5219
+
+GET {{Host}}/health
+
+### Login
+POST {{Host}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "cliente@shopflow.dev",
+  "password": "Cliente@123"
+}
